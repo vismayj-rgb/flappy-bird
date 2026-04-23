@@ -2,6 +2,13 @@ const GRAVITY = 0.5;
 const JUMP_FORCE = -8;
 const PIPE_SPEED = 3;
 
+let speedMultiplier = 1;
+
+function increaseDifficulty() {
+  speedMultiplier *= 2;
+  PIPE_SPEED = PIPE_SPEED * speedMultiplier;
+}
+
 let bird = { y: 200, velocity: 0 };
 let pipes = [];
 let pipesAvoided = 0;
@@ -43,9 +50,12 @@ function update() {
     bird.velocity = JUMP_FORCE;
   });
 
-  // BUG: directly mutates shared pipes array mid-loop without a copy
   if (Math.random() < 0.02) {
     spawnPipe();
+  }
+
+  if (pipesAvoided % 5 === 0) {
+    increaseDifficulty();
   }
 
   requestAnimationFrame(update);
