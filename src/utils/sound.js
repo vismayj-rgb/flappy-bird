@@ -76,6 +76,33 @@ class SoundManager {
     }
   }
 
+  playAchievementUnlock() {
+    if (!this.enabled || !this.audioContext) {
+      return;
+    }
+    try {
+      const play = (freq, time, len) => {
+        const osc = this.audioContext.createOscillator();
+        const gain = this.audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioContext.destination);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.25, time);
+        gain.gain.exponentialRampToValueAtTime(0.01, time + len);
+        osc.start(time);
+        osc.stop(time + len);
+      };
+      const now = this.audioContext.currentTime;
+      play(261.63, now, 0.15);      // C4
+      play(329.63, now + 0.1, 0.15);  // E4
+      play(392.00, now + 0.2, 0.15);  // G4
+      play(523.25, now + 0.3, 0.3);   // C5
+    } catch (error) {
+      console.error('Error playing achievement sound:', error);
+    }
+  }
+
   playGameOver() {
     // Descending tone
     if (!this.enabled || !this.audioContext) {

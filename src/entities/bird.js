@@ -16,6 +16,12 @@ class Bird {
     this.skin = (typeof StorageManager !== 'undefined') ? StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC') : 'CLASSIC';
     this.shieldTime = 0;
     this.multiplierTime = 0;
+    this.slowMoTime = 0;
+    this.shieldsCollected = 0;
+    this.gemsCollected = 0;
+    this.slowMoCollected = 0;
+    // Particle trail
+    this.particles = [];
   }
 
   jump() {
@@ -43,15 +49,40 @@ class Bird {
     this.rotation = Math.min(Math.max(this.velocity * CONFIG.BIRD.ROTATION_SPEED, -30), 90);
 
     // Update power-up durations
-    if (this.shieldTime > 0) {
-      this.shieldTime--;
-    }
-    if (this.multiplierTime > 0) {
-      this.multiplierTime--;
-    }
+    if (this.shieldTime > 0)     this.shieldTime--;
+    if (this.multiplierTime > 0) this.multiplierTime--;
+    if (this.slowMoTime > 0)     this.slowMoTime--;
+
+    // Emit particle trail
+    const skinColors = CONFIG.BIRD.SKINS[this.skin] || CONFIG.BIRD.SKINS.CLASSIC;
+    this.particles.push({
+      x: this.x + CONFIG.BIRD.WIDTH / 2,
+      y: this.y + CONFIG.BIRD.HEIGHT / 2,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: (Math.random() - 0.5) * 1.2,
+      life: 1.0,
+      color: skinColors.body
+    });
+    // Update and prune particles
+    this.particles = this.particles
+      .map(p => ({ ...p, x: p.x + p.vx, y: p.y + p.vy, life: p.life - 0.06 }))
+      .filter(p => p.life > 0);
   }
 
   draw(ctx) {
+    // Draw particle trail BEFORE the bird (world-space, not transformed)
+    this.particles.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.life * 0.7;
+      ctx.fillStyle = p.color;
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4 * p.life, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
     ctx.save();
     
     // Move to bird position
@@ -83,6 +114,19 @@ class Bird {
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
       ctx.arc(0, 0, CONFIG.BIRD.WIDTH / 2 + 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    if (this.slowMoTime > 0) {
+      ctx.save();
+      ctx.strokeStyle = CONFIG.POWERUP.COLORS.SLOW_MO;
+      ctx.lineWidth = 2.5;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = CONFIG.POWERUP.COLORS.SLOW_MO;
+      ctx.setLineDash([6, 3]);
+      ctx.beginPath();
+      ctx.arc(0, 0, CONFIG.BIRD.WIDTH / 2 + 11, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }

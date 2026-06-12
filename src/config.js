@@ -40,13 +40,16 @@ const CONFIG = {
     SPAWN_CHANCE: 0.25, // 25% chance to spawn with a pipe
     SHIELD_DURATION: 300, // 5 seconds at 60 FPS
     DOUBLE_SCORE_DURATION: 300, // 5 seconds at 60 FPS
+    SLOW_MO_DURATION: 300, // 5 seconds at 60 FPS
     TYPES: {
       SHIELD: 'SHIELD',
-      DOUBLE_SCORE: 'DOUBLE_SCORE'
+      DOUBLE_SCORE: 'DOUBLE_SCORE',
+      SLOW_MO: 'SLOW_MO'
     },
     COLORS: {
-      SHIELD: '#00FFFF', // Cyan
-      DOUBLE_SCORE: '#FF00FF' // Magenta
+      SHIELD: '#00FFFF',      // Cyan
+      DOUBLE_SCORE: '#FF00FF', // Magenta
+      SLOW_MO: '#FFAA00'      // Amber
     }
   },
 
@@ -97,7 +100,42 @@ const CONFIG = {
     GROUND_HEIGHT: 50,
     GROUND_COLOR: '#DEB887',
     CLOUD_COUNT: 3,
-    CLOUD_COLOR: 'rgba(255, 255, 255, 0.6)'
+    CLOUD_COLOR: 'rgba(255, 255, 255, 0.6)',
+    THEMES: {
+      DAY: {
+        BACKGROUND: ['#4ec0ca', '#a7dbd8', '#e0f9ff'],
+        CLOUD_COLOR: 'rgba(255, 255, 255, 0.6)',
+        PIPE_COLOR_TOP: '#5CB85C',
+        PIPE_COLOR_BOTTOM: '#5CB85C',
+        PIPE_CAP: '#4A934A',
+        PIPE_STRIPE: '#4A934A',
+        GROUND_COLOR: '#DEB887',
+        GROUND_STRIPE: '#C9A66B',
+        GROUND_LINE: '#8B7355'
+      },
+      SUNSET: {
+        BACKGROUND: ['#FD6A02', '#FF8C00', '#FFD700'],
+        CLOUD_COLOR: 'rgba(255, 220, 200, 0.5)',
+        PIPE_COLOR_TOP: '#8B5A2B',
+        PIPE_COLOR_BOTTOM: '#8B5A2B',
+        PIPE_CAP: '#6E4720',
+        PIPE_STRIPE: '#6E4720',
+        GROUND_COLOR: '#CD853F',
+        GROUND_STRIPE: '#B8860B',
+        GROUND_LINE: '#8B4513'
+      },
+      NIGHT: {
+        BACKGROUND: ['#0A1128', '#101F42', '#1C3166'],
+        CLOUD_COLOR: 'rgba(255, 255, 255, 0.15)',
+        PIPE_COLOR_TOP: '#4B0082',
+        PIPE_COLOR_BOTTOM: '#4B0082',
+        PIPE_CAP: '#3A0066',
+        PIPE_STRIPE: '#3A0066',
+        GROUND_COLOR: '#2F4F4F',
+        GROUND_STRIPE: '#1C2E2E',
+        GROUND_LINE: '#000000'
+      }
+    }
   },
 
   // Score settings
@@ -132,8 +170,23 @@ const CONFIG = {
     GAMES_PLAYED: 'flappybird_gamesplayed',
     SOUND_ENABLED: 'flappybird_sound',
     DIFFICULTY: 'flappybird_difficulty',
-    BIRD_SKIN: 'flappybird_birdskin'
+    BIRD_SKIN: 'flappybird_birdskin',
+    ACHIEVEMENTS: 'flappybird_achievements',
+    BEST_RUNS: 'flappybird_bestruns'
   },
+
+  // Achievement definitions
+  ACHIEVEMENTS: [
+    { id: 'first_flight',  title: 'First Flight \uD83D\uDC26',    desc: 'Score your first point!' },
+    { id: 'bronze_flapper',title: 'Bronze Flapper \uD83E\uDD49', desc: 'Reach a score of 10 points.' },
+    { id: 'silver_flapper',title: 'Silver Flapper \uD83E\uDD48', desc: 'Reach a score of 25 points.' },
+    { id: 'gold_flapper',  title: 'Gold Flapper \uD83E\uDD47',   desc: 'Reach a score of 50 points.' },
+    { id: 'shield_master', title: 'Shield Master \uD83D\uDEE1\uFE0F',   desc: 'Collect 3 shields in a single run.' },
+    { id: 'gem_collector', title: 'Gem Collector \uD83D\uDC8E',   desc: 'Collect 5 gems in a single run.' },
+    { id: 'slow_time_lord',title: 'Slow Time Lord \u23F3',        desc: 'Collect 3 slow-motion power-ups in a run.' },
+    { id: 'combo_5',       title: 'Combo Master \uD83D\uDD25',    desc: 'Build a 5x combo without missing.' },
+    { id: 'survivor',      title: 'Survivor \u2764\uFE0F',         desc: 'Finish a run with all 3 lives intact.' }
+  ],
 
   // Debug mode
   DEBUG: false
@@ -151,7 +204,12 @@ Object.freeze(CONFIG.POWERUP.TYPES);
 Object.freeze(CONFIG.POWERUP.COLORS);
 Object.freeze(CONFIG.DIFFICULTY);
 Object.freeze(CONFIG.VISUALS);
+Object.freeze(CONFIG.VISUALS.THEMES);
+Object.freeze(CONFIG.VISUALS.THEMES.DAY);
+Object.freeze(CONFIG.VISUALS.THEMES.SUNSET);
+Object.freeze(CONFIG.VISUALS.THEMES.NIGHT);
 Object.freeze(CONFIG.SCORE);
 Object.freeze(CONFIG.STATES);
 Object.freeze(CONFIG.KEYS);
 Object.freeze(CONFIG.STORAGE);
+Object.freeze(CONFIG.ACHIEVEMENTS);

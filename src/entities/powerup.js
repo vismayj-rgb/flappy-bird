@@ -57,6 +57,9 @@ class PowerUp {
     } else if (this.type === CONFIG.POWERUP.TYPES.DOUBLE_SCORE) {
       ctx.font = 'bold 10px Arial';
       ctx.fillText('2X', this.x, this.y);
+    } else if (this.type === CONFIG.POWERUP.TYPES.SLOW_MO) {
+      ctx.font = 'bold 11px Arial';
+      ctx.fillText('⏱', this.x, this.y);
     }
     
     ctx.restore();

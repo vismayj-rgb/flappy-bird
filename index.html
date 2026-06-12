@@ -10,6 +10,7 @@
   <link rel="icon" type="image/png" href="assets/images/favicon.png">
 </head>
 <body>
+  <div id="toastContainer" class="toast-container"></div>
   <div class="container">
     <header>
       <h1>🐦 Flappy Bird</h1>
@@ -46,6 +47,8 @@
         <div class="score-display">
           Score: <span id="currentScore">0</span>
         </div>
+        <div id="livesDisplay" class="lives-display"></div>
+        <div id="comboBadge" class="combo-badge" style="display:none;"></div>
         <div class="controls-hint">
           SPACE / CLICK to jump
         </div>
@@ -84,6 +87,27 @@
           </select>
         </label>
       </div>
+
+      <div class="achievements">
+        <h3>Achievements</h3>
+        <div id="achievementsList" class="achievements-list">
+          <!-- Dynamically loaded -->
+        </div>
+      </div>
+
+      <div class="best-runs">
+        <h3>🏆 Best Runs</h3>
+        <table class="run-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Score</th><th>Difficulty</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="bestRunsBody">
+            <!-- Dynamically loaded -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <footer>
@@ -100,6 +124,8 @@
   <script src="src/entities/powerup.js"></script>
   <script src="src/managers/collision.js"></script>
   <script src="src/managers/score.js"></script>
+  <script src="src/managers/achievement.js"></script>
+  <script src="src/managers/runlog.js"></script>
   <script src="src/game.js"></script>
   <script src="src/main.js"></script>
 </body>

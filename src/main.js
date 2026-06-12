@@ -107,6 +107,19 @@ function loadSettings() {
   
   // Update stats display
   game.scoreManager.updateDisplay();
+
+  // Refresh achievement panel
+  if (window.achievementManager) {
+    achievementManager.refreshUI();
+  }
+
+  // Refresh best runs panel
+  if (window.runLogManager) {
+    runLogManager.refreshUI();
+  }
+
+  // Init lives display
+  game.updateLivesDisplay();
 }
 
 function startGame() {

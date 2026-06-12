@@ -16,29 +16,34 @@ class Pipe {
     this.x -= speed;
   }
 
-  draw(ctx) {
+  draw(ctx, themeColors = null) {
     const canvasHeight = CONFIG.CANVAS.HEIGHT;
     const groundHeight = CONFIG.VISUALS.GROUND_HEIGHT;
     
+    const colorTop = themeColors ? themeColors.PIPE_COLOR_TOP : CONFIG.PIPE.COLOR_TOP;
+    const colorBottom = themeColors ? themeColors.PIPE_COLOR_BOTTOM : CONFIG.PIPE.COLOR_BOTTOM;
+    const capColor = themeColors ? themeColors.PIPE_CAP : '#4A934A';
+    const stripeColor = themeColors ? themeColors.PIPE_STRIPE : '#4A934A';
+
     // Top pipe
-    ctx.fillStyle = CONFIG.PIPE.COLOR_TOP;
+    ctx.fillStyle = colorTop;
     ctx.fillRect(this.x, 0, this.width, this.gapY);
     
     // Top pipe cap
-    ctx.fillStyle = '#4A934A';
+    ctx.fillStyle = capColor;
     ctx.fillRect(this.x - 2, this.gapY - 20, this.width + 4, 20);
     
     // Bottom pipe
     const bottomPipeY = this.gapY + this.gapHeight;
-    ctx.fillStyle = CONFIG.PIPE.COLOR_BOTTOM;
+    ctx.fillStyle = colorBottom;
     ctx.fillRect(this.x, bottomPipeY, this.width, canvasHeight - bottomPipeY - groundHeight);
     
     // Bottom pipe cap
-    ctx.fillStyle = '#4A934A';
+    ctx.fillStyle = capColor;
     ctx.fillRect(this.x - 2, bottomPipeY, this.width + 4, 20);
     
     // Add pipe details (stripes)
-    ctx.strokeStyle = '#4A934A';
+    ctx.strokeStyle = stripeColor;
     ctx.lineWidth = 2;
     for (let i = 20; i < this.gapY; i += 30) {
       ctx.beginPath();
@@ -137,8 +142,8 @@ class PipeManager {
     }
   }
 
-  draw(ctx) {
-    this.pipes.forEach(pipe => pipe.draw(ctx));
+  draw(ctx, themeColors = null) {
+    this.pipes.forEach(pipe => pipe.draw(ctx, themeColors));
   }
 
   getPipes() {
