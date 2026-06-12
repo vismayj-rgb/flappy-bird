@@ -24,7 +24,30 @@ const CONFIG = {
     START_X: 100,
     START_Y: 300,
     COLOR: '#FFD700',
-    ROTATION_SPEED: 3
+    ROTATION_SPEED: 3,
+    SKINS: {
+      CLASSIC: { name: 'Classic Gold', body: '#FFD700', wing: '#FFA500', beak: '#FF6347' },
+      RUBY: { name: 'Ruby Red', body: '#E53E3E', wing: '#ED8936', beak: '#ECC94B' },
+      EMERALD: { name: 'Neon Emerald', body: '#48BB78', wing: '#38A169', beak: '#E53E3E' },
+      VORTEX: { name: 'Vortex Violet', body: '#9F7AEA', wing: '#00B5D8', beak: '#ED64A6' }
+    }
+  },
+
+  // Power-up settings
+  POWERUP: {
+    WIDTH: 20,
+    HEIGHT: 20,
+    SPAWN_CHANCE: 0.25, // 25% chance to spawn with a pipe
+    SHIELD_DURATION: 300, // 5 seconds at 60 FPS
+    DOUBLE_SCORE_DURATION: 300, // 5 seconds at 60 FPS
+    TYPES: {
+      SHIELD: 'SHIELD',
+      DOUBLE_SCORE: 'DOUBLE_SCORE'
+    },
+    COLORS: {
+      SHIELD: '#00FFFF', // Cyan
+      DOUBLE_SCORE: '#FF00FF' // Magenta
+    }
   },
 
   // Pipe settings
@@ -108,7 +131,8 @@ const CONFIG = {
     TOTAL_SCORE: 'flappybird_totalscore',
     GAMES_PLAYED: 'flappybird_gamesplayed',
     SOUND_ENABLED: 'flappybird_sound',
-    DIFFICULTY: 'flappybird_difficulty'
+    DIFFICULTY: 'flappybird_difficulty',
+    BIRD_SKIN: 'flappybird_birdskin'
   },
 
   // Debug mode
@@ -120,7 +144,11 @@ Object.freeze(CONFIG);
 Object.freeze(CONFIG.CANVAS);
 Object.freeze(CONFIG.PHYSICS);
 Object.freeze(CONFIG.BIRD);
+Object.freeze(CONFIG.BIRD.SKINS);
 Object.freeze(CONFIG.PIPE);
+Object.freeze(CONFIG.POWERUP);
+Object.freeze(CONFIG.POWERUP.TYPES);
+Object.freeze(CONFIG.POWERUP.COLORS);
 Object.freeze(CONFIG.DIFFICULTY);
 Object.freeze(CONFIG.VISUALS);
 Object.freeze(CONFIG.SCORE);

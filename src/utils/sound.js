@@ -61,6 +61,21 @@ class SoundManager {
     this.playTone(100, 0.3, 'sawtooth');
   }
 
+  playPowerUp() {
+    // Rising chime sound
+    if (!this.enabled || !this.audioContext) {
+      return;
+    }
+    try {
+      this.playTone(523.25, 0.08, 'sine'); // C5
+      setTimeout(() => {
+        this.playTone(659.25, 0.12, 'sine'); // E5
+      }, 70);
+    } catch (error) {
+      console.error('Error playing power-up sound:', error);
+    }
+  }
+
   playGameOver() {
     // Descending tone
     if (!this.enabled || !this.audioContext) {

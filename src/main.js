@@ -16,6 +16,7 @@ const menuBtn = document.getElementById('menuBtn');
 const soundToggle = document.getElementById('soundToggle');
 const difficultySlider = document.getElementById('difficultySlider');
 const difficultyValue = document.getElementById('difficultyValue');
+const skinSelector = document.getElementById('skinSelector');
 
 // Difficulty labels
 const difficultyLabels = ['', 'Easy', 'Medium', 'Hard', 'Expert', 'Insane'];
@@ -63,6 +64,16 @@ function setupEventListeners() {
     game.setDifficulty(difficulties[value]);
   });
 
+  // Skin selector
+  skinSelector.addEventListener('change', (e) => {
+    const selectedSkin = e.target.value;
+    StorageManager.set(CONFIG.STORAGE.BIRD_SKIN, selectedSkin);
+    if (game && game.bird) {
+      game.bird.skin = selectedSkin;
+      game.draw();
+    }
+  });
+
   // Prevent spacebar from scrolling page
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && e.target === document.body) {
@@ -83,6 +94,15 @@ function loadSettings() {
   if (difficultyIndex !== -1) {
     difficultySlider.value = difficultyIndex + 1;
     difficultyValue.textContent = difficultyLabels[difficultyIndex + 1];
+  }
+  
+  // Load skin setting
+  const savedSkin = StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC');
+  if (skinSelector) {
+    skinSelector.value = savedSkin;
+  }
+  if (game && game.bird) {
+    game.bird.skin = savedSkin;
   }
   
   // Update stats display

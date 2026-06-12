@@ -36,10 +36,29 @@ class CollisionManager {
     return !pipe.scored && birdBounds.left > pipeBounds.x + pipeBounds.width;
   }
 
+  static checkBirdPowerUpCollision(bird, powerup) {
+    if (powerup.collected) return false;
+    
+    const birdBounds = bird.getBounds();
+    const powerUpBounds = powerup.getBounds();
+    
+    return (
+      birdBounds.right > powerUpBounds.left &&
+      birdBounds.left < powerUpBounds.right &&
+      birdBounds.bottom > powerUpBounds.top &&
+      birdBounds.top < powerUpBounds.bottom
+    );
+  }
+
   static checkCollisions(bird, pipes) {
-    // Check boundary collision
+    // Check boundary collision (boundary collision like ground always ends the game)
     if (this.checkBirdBoundaryCollision(bird)) {
       return { collision: true, type: 'boundary' };
+    }
+    
+    // If shield is active, bypass pipe collisions
+    if (bird.shieldTime > 0) {
+      return { collision: false };
     }
     
     // Check pipe collisions

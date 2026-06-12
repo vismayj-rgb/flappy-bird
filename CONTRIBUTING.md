@@ -119,6 +119,11 @@ When adding new features:
 4. **Tests** go in `tests/` with `.test.js` suffix
 5. **Assets** go in appropriate `assets/` subdirectory
 
+### Adding Game Elements
+
+- **Skins**: Define the skin colors in `CONFIG.BIRD.SKINS` inside `src/config.js` and add the corresponding `<option>` to the `#skinSelector` element in `index.html`.
+- **Power-Ups**: Add the new power-up type and color in `CONFIG.POWERUP.TYPES` and `CONFIG.POWERUP.COLORS` inside `src/config.js`. Extend `PowerUp` drawing or collection logic as needed, and ensure a unit test is added to `tests/powerup.test.js`.
+
 ## Commit Guidelines
 
 ### Commit Message Format

@@ -13,6 +13,9 @@ class Bird {
     this.y = CONFIG.BIRD.START_Y;
     this.velocity = 0;
     this.rotation = 0;
+    this.skin = (typeof StorageManager !== 'undefined') ? StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC') : 'CLASSIC';
+    this.shieldTime = 0;
+    this.multiplierTime = 0;
   }
 
   jump() {
@@ -38,6 +41,14 @@ class Bird {
     
     // Update rotation based on velocity
     this.rotation = Math.min(Math.max(this.velocity * CONFIG.BIRD.ROTATION_SPEED, -30), 90);
+
+    // Update power-up durations
+    if (this.shieldTime > 0) {
+      this.shieldTime--;
+    }
+    if (this.multiplierTime > 0) {
+      this.multiplierTime--;
+    }
   }
 
   draw(ctx) {
@@ -49,14 +60,41 @@ class Bird {
     // Rotate based on velocity
     ctx.rotate((this.rotation * Math.PI) / 180);
     
+    // Get skin colors
+    const skinColors = CONFIG.BIRD.SKINS[this.skin] || CONFIG.BIRD.SKINS.CLASSIC;
+
+    // Draw active power-up effects
+    if (this.shieldTime > 0) {
+      ctx.save();
+      ctx.strokeStyle = CONFIG.POWERUP.COLORS.SHIELD;
+      ctx.lineWidth = 3;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = CONFIG.POWERUP.COLORS.SHIELD;
+      ctx.beginPath();
+      ctx.arc(0, 0, CONFIG.BIRD.WIDTH / 2 + 5, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    if (this.multiplierTime > 0) {
+      ctx.save();
+      ctx.strokeStyle = CONFIG.POWERUP.COLORS.DOUBLE_SCORE;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(0, 0, CONFIG.BIRD.WIDTH / 2 + 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    
     // Draw bird body
-    ctx.fillStyle = CONFIG.BIRD.COLOR;
+    ctx.fillStyle = skinColors.body;
     ctx.beginPath();
     ctx.arc(0, 0, CONFIG.BIRD.WIDTH / 2, 0, Math.PI * 2);
     ctx.fill();
     
     // Draw bird wing
-    ctx.fillStyle = '#FFA500';
+    ctx.fillStyle = skinColors.wing;
     ctx.beginPath();
     ctx.ellipse(-5, 0, 8, 12, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -73,7 +111,7 @@ class Bird {
     ctx.fill();
     
     // Draw bird beak
-    ctx.fillStyle = '#FF6347';
+    ctx.fillStyle = skinColors.beak;
     ctx.beginPath();
     ctx.moveTo(10, 0);
     ctx.lineTo(18, -3);

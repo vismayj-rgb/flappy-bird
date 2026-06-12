@@ -67,12 +67,21 @@
       <div class="settings">
         <h3>Settings</h3>
         <label class="setting-item">
-          <input type="checkbox" id="soundToggle" checked>
-          <span>Sound Effects</span>
+           <input type="checkbox" id="soundToggle" checked>
+           <span>Sound Effects</span>
         </label>
         <label class="setting-item">
           <input type="range" id="difficultySlider" min="1" max="5" value="3">
           <span>Difficulty: <span id="difficultyValue">Medium</span></span>
+        </label>
+        <label class="setting-item select-item">
+          <span>Bird Skin:</span>
+          <select id="skinSelector">
+            <option value="CLASSIC">Classic Gold</option>
+            <option value="RUBY">Ruby Red</option>
+            <option value="EMERALD">Neon Emerald</option>
+            <option value="VORTEX">Vortex Violet</option>
+          </select>
         </label>
       </div>
     </div>
@@ -88,6 +97,7 @@
   <script src="src/utils/sound.js"></script>
   <script src="src/entities/bird.js"></script>
   <script src="src/entities/pipe.js"></script>
+  <script src="src/entities/powerup.js"></script>
   <script src="src/managers/collision.js"></script>
   <script src="src/managers/score.js"></script>
   <script src="src/game.js"></script>

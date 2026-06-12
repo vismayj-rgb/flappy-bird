@@ -78,9 +78,25 @@ describe('CollisionManager', () => {
         return !pipe.scored && birdBounds.left > pipeBounds.x + pipeBounds.width;
       },
 
+      checkBirdPowerUpCollision(bird, powerup) {
+        if (powerup.collected) return false;
+        const birdBounds = bird.getBounds();
+        const powerUpBounds = powerup.getBounds();
+        return (
+          birdBounds.right > powerUpBounds.left &&
+          birdBounds.left < powerUpBounds.right &&
+          birdBounds.bottom > powerUpBounds.top &&
+          birdBounds.top < powerUpBounds.bottom
+        );
+      },
+
       checkCollisions(bird, pipes) {
         if (this.checkBirdBoundaryCollision(bird)) {
           return { collision: true, type: 'boundary' };
+        }
+        
+        if (bird.shieldTime > 0) {
+          return { collision: false };
         }
         
         for (const pipe of pipes) {
@@ -258,6 +274,54 @@ describe('CollisionManager', () => {
     test('should return no collision when safe', () => {
       const result = CollisionManager.checkCollisions(bird, [pipe]);
       expect(result.collision).toBe(false);
+    });
+
+    test('should bypass pipe collision when shield is active', () => {
+      bird.shieldTime = 100;
+      bird.getBounds = () => ({
+        left: 200,
+        right: 234,
+        top: 150,
+        bottom: 174
+      });
+
+      const result = CollisionManager.checkCollisions(bird, [pipe]);
+      expect(result.collision).toBe(false);
+    });
+  });
+
+  describe('Power-up Collision', () => {
+    let powerup;
+
+    beforeEach(() => {
+      powerup = {
+        collected: false,
+        getBounds: () => ({
+          left: 110,
+          right: 130,
+          top: 310,
+          bottom: 330
+        })
+      };
+    });
+
+    test('should detect collision when bird overlaps power-up', () => {
+      expect(CollisionManager.checkBirdPowerUpCollision(bird, powerup)).toBe(true);
+    });
+
+    test('should not detect collision when power-up is already collected', () => {
+      powerup.collected = true;
+      expect(CollisionManager.checkBirdPowerUpCollision(bird, powerup)).toBe(false);
+    });
+
+    test('should not detect collision when bird is far from power-up', () => {
+      powerup.getBounds = () => ({
+        left: 400,
+        right: 420,
+        top: 100,
+        bottom: 120
+      });
+      expect(CollisionManager.checkBirdPowerUpCollision(bird, powerup)).toBe(false);
     });
   });
 });

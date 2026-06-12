@@ -12,7 +12,8 @@ class Game {
     
     // Initialize game objects
     this.bird = new Bird();
-    this.pipeManager = new PipeManager(this.difficulty);
+    this.powerUpManager = new PowerUpManager();
+    this.pipeManager = new PipeManager(this.difficulty, this.powerUpManager);
     this.scoreManager = new ScoreManager();
     
     // Animation frame reference
@@ -59,6 +60,7 @@ class Game {
   reset() {
     this.bird.reset();
     this.pipeManager.reset();
+    this.powerUpManager.reset();
     this.scoreManager.reset();
   }
 
@@ -100,6 +102,9 @@ class Game {
     // Update pipes
     this.pipeManager.update();
 
+    // Update powerups
+    this.powerUpManager.update(this.pipeManager.speed);
+
     // Update clouds
     this.clouds.forEach(cloud => {
       cloud.x -= cloud.speed;
@@ -108,6 +113,22 @@ class Game {
         cloud.y = Math.random() * 200 + 50;
       }
     });
+
+    // Check power-up collisions
+    const powerups = this.powerUpManager.getPowerUps();
+    for (const powerup of powerups) {
+      if (CollisionManager.checkBirdPowerUpCollision(this.bird, powerup)) {
+        powerup.collected = true;
+        if (window.soundManager) {
+          soundManager.playPowerUp();
+        }
+        if (powerup.type === CONFIG.POWERUP.TYPES.SHIELD) {
+          this.bird.shieldTime = CONFIG.POWERUP.SHIELD_DURATION;
+        } else if (powerup.type === CONFIG.POWERUP.TYPES.DOUBLE_SCORE) {
+          this.bird.multiplierTime = CONFIG.POWERUP.DOUBLE_SCORE_DURATION;
+        }
+      }
+    }
 
     // Check collisions
     const collisionResult = CollisionManager.checkCollisions(
@@ -123,7 +144,8 @@ class Game {
 
     // Check scoring
     if (CollisionManager.checkScoring(this.bird, this.pipeManager.getPipes())) {
-      this.scoreManager.increment();
+      const amount = this.bird.multiplierTime > 0 ? 2 : 1;
+      this.scoreManager.increment(amount);
     }
   }
 
@@ -140,6 +162,9 @@ class Game {
     // Draw pipes
     this.pipeManager.draw(this.ctx);
 
+    // Draw power-ups
+    this.powerUpManager.draw(this.ctx);
+
     // Draw bird
     this.bird.draw(this.ctx);
 
@@ -149,11 +174,49 @@ class Game {
     // Draw score (only during gameplay)
     if (this.state === CONFIG.STATES.PLAYING) {
       this.scoreManager.draw(this.ctx);
+      this.drawPowerUpHUD();
     }
 
     // Draw pause indicator
     if (this.state === CONFIG.STATES.PAUSED) {
       this.drawPauseScreen();
+    }
+  }
+
+  drawPowerUpHUD() {
+    let yPos = 20;
+    if (this.bird.shieldTime > 0) {
+      this.ctx.save();
+      // Background bar
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      this.ctx.fillRect(10, yPos, 120, 15);
+      // Fill bar
+      const width = (this.bird.shieldTime / CONFIG.POWERUP.SHIELD_DURATION) * 120;
+      this.ctx.fillStyle = CONFIG.POWERUP.COLORS.SHIELD;
+      this.ctx.fillRect(10, yPos, width, 15);
+      // Text
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.font = 'bold 10px Arial';
+      this.ctx.textAlign = 'left';
+      this.ctx.fillText('SHIELD', 15, yPos + 11);
+      this.ctx.restore();
+      yPos += 25;
+    }
+    if (this.bird.multiplierTime > 0) {
+      this.ctx.save();
+      // Background bar
+      this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      this.ctx.fillRect(10, yPos, 120, 15);
+      // Fill bar
+      const width = (this.bird.multiplierTime / CONFIG.POWERUP.DOUBLE_SCORE_DURATION) * 120;
+      this.ctx.fillStyle = CONFIG.POWERUP.COLORS.DOUBLE_SCORE;
+      this.ctx.fillRect(10, yPos, width, 15);
+      // Text
+      this.ctx.fillStyle = '#FFFFFF';
+      this.ctx.font = 'bold 10px Arial';
+      this.ctx.textAlign = 'left';
+      this.ctx.fillText('2X SCORE', 15, yPos + 11);
+      this.ctx.restore();
     }
   }
 

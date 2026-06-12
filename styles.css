@@ -259,6 +259,30 @@ header h1 {
   color: #667eea;
 }
 
+.setting-item.select-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#skinSelector {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  font-size: 0.95rem;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  width: 150px;
+}
+
+#skinSelector:focus {
+  border-color: #667eea;
+}
+
 /* ==================== FOOTER ==================== */
 footer {
   text-align: center;

@@ -9,6 +9,8 @@ A modern, fully-featured implementation of the classic Flappy Bird game built wi
 - **Pure JavaScript** - No frameworks or dependencies
 - **Smooth Gameplay** - 60 FPS canvas rendering
 - **5 Difficulty Levels** - From Easy to Insane
+- **Power-Up Items** - Collect floating Star Shields (Invincibility) and Gems (2X Score multipliers)
+- **Bird Skins Customization** - Choose from Classic Gold, Ruby Red, Neon Emerald, or Vortex Violet
 - **High Score System** - LocalStorage-based score tracking
 - **Sound Effects** - Web Audio API synthesized sounds
 - **Responsive Design** - Works on desktop and mobile
@@ -169,6 +171,17 @@ CONFIG = {
 2. Update the drawing methods in `src/entities/bird.js` and `src/entities/pipe.js`
 3. Load and draw images using Canvas API
 
+### Adding Custom Skins
+
+To add a new skin color scheme for the bird, edit `src/config.js` and add a new entry to the `CONFIG.BIRD.SKINS` object:
+```javascript
+MY_SKIN: { name: 'My Custom Skin', body: '#HEXCOLOR', wing: '#HEXCOLOR', beak: '#HEXCOLOR' }
+```
+Then, add an option to the `#skinSelector` element in `index.html`:
+```html
+<option value="MY_SKIN">My Custom Skin</option>
+```
+
 ### Adding Custom Sounds
 
 1. Place audio files in `assets/sounds/`
@@ -220,8 +233,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔮 Future Enhancements
 
 - [ ] Mobile touch controls optimization
-- [ ] Multiple bird skins
-- [ ] Power-ups and special items
+- [x] Multiple bird skins
+- [x] Power-ups and special items
 - [ ] Multiplayer mode
 - [ ] Leaderboard integration
 - [ ] Achievement system

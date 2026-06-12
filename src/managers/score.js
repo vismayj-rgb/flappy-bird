@@ -15,8 +15,8 @@ class ScoreManager {
     this.currentScore = 0;
   }
 
-  increment() {
-    this.currentScore++;
+  increment(amount = 1) {
+    this.currentScore += amount;
     
     // Play score sound if available
     if (window.soundManager) {

@@ -57,12 +57,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Well-organized project structure
 - Comprehensive README with examples
 
+## [1.1.0] - 2026-06-12
+
+### Added
+- **Power-Ups System**:
+  - Shield (Star) power-up providing 5 seconds of invincibility to bypass pipe collisions.
+  - Gem (2X Score) power-up doubling score increments for 5 seconds.
+  - Active power-up indicators showing countdown progress bars on the game HUD.
+  - Dynamic audio chime synthesized via Web Audio API when picking up a power-up.
+- **Customizable Bird Skins**:
+  - Dropdown selector in the settings panel to change the bird's skin.
+  - Four premium color options: Classic Gold, Ruby Red, Neon Emerald, and Vortex Violet.
+  - Saved skin preferences stored in localStorage.
+  - Responsive visual shield/double-points aura renderings around the bird entity.
+- New unit test coverage for power-ups and active shield collision bypasses in Jest.
+
 ## [Unreleased]
 
 ### Planned Features
 - Mobile touch controls optimization
-- Multiple bird skins
-- Power-ups system
 - Multiplayer mode
 - Online leaderboard
 - Achievement system
@@ -86,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.1.0** (2026-06-12) - Added customizable bird skins and power-ups system
 - **1.0.0** (2026-05-21) - Initial release
 
 ---
