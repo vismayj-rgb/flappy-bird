@@ -26,10 +26,15 @@ const CONFIG = {
     COLOR: '#FFD700',
     ROTATION_SPEED: 3,
     SKINS: {
-      CLASSIC: { name: 'Classic Gold', body: '#FFD700', wing: '#FFA500', beak: '#FF6347' },
-      RUBY: { name: 'Ruby Red', body: '#E53E3E', wing: '#ED8936', beak: '#ECC94B' },
-      EMERALD: { name: 'Neon Emerald', body: '#48BB78', wing: '#38A169', beak: '#E53E3E' },
-      VORTEX: { name: 'Vortex Violet', body: '#9F7AEA', wing: '#00B5D8', beak: '#ED64A6' }
+      CLASSIC: { name: 'Classic Gold', body: '#FFD700', wing: '#FFA500', beak: '#FF6347', price: 0 },
+      RUBY: { name: 'Ruby Red', body: '#E53E3E', wing: '#ED8936', beak: '#ECC94B', price: 0 },
+      EMERALD: { name: 'Neon Emerald', body: '#48BB78', wing: '#38A169', beak: '#E53E3E', price: 0 },
+      VORTEX: { name: 'Vortex Violet', body: '#9F7AEA', wing: '#00B5D8', beak: '#ED64A6', price: 0 },
+      // Premium skins (purchasable in shop)
+      PHOENIX: { name: 'Golden Phoenix', body: '#FFAE00', wing: '#FF4D00', beak: '#FFFFFF', price: 150 },
+      RAINBOW: { name: 'Rainbow Trail', body: '#FF007F', wing: '#00F2FE', beak: '#FFF700', price: 100 },
+      BAT: { name: 'Shadow Bat', body: '#1D1D2C', wing: '#4B0082', beak: '#E53E3E', price: 50 },
+      ROBO: { name: 'Robo Bird', body: '#718096', wing: '#3182CE', beak: '#00FFFF', price: 75 }
     }
   },
 
@@ -50,6 +55,47 @@ const CONFIG = {
       SHIELD: '#00FFFF',      // Cyan
       DOUBLE_SCORE: '#FF00FF', // Magenta
       SLOW_MO: '#FFAA00'      // Amber
+    }
+  },
+
+  // Coin settings
+  COIN: {
+    WIDTH: 16,
+    HEIGHT: 16,
+    RADIUS: 8,
+    SPAWN_CHANCE: 0.45, // 45% chance to spawn a coin in the pipe gap
+    COLOR: '#FFD700',
+    SHADOW_COLOR: '#B8860B'
+  },
+
+  // Boss settings
+  BOSS: {
+    TRIGGER_SCORE: 25, // Spawn boss every 25 points
+    HEALTH: 3,
+    WIDTH: 70,
+    HEIGHT: 55,
+    COLOR: '#2D3748',
+    SPEED: 1.5,
+    FIRE_INTERVAL: 80, // frames between fireball shots
+    FIREBALL_SPEED: 4.5,
+    FIREBALL_RADIUS: 7,
+    ENERGY_ORB_SPAWN_CHANCE: 0.2, // Spawns during boss phases so player can attack
+    ENERGY_ORB_RADIUS: 8
+  },
+
+  // Weather settings
+  WEATHER: {
+    TYPES: {
+      CLEAR: 'CLEAR',
+      RAINY: 'RAINY',
+      SNOWY: 'SNOWY',
+      STORMY: 'STORMY'
+    },
+    WINDS: {
+      CLEAR: { x: 0, y: 0, name: 'Calm' },
+      RAINY: { x: -0.2, y: 0.15, name: 'Breezy (Downward force)' },
+      SNOWY: { x: 0.1, y: -0.05, name: 'Slight Draft (Upward drift)' },
+      STORMY: { x: -0.6, y: 0.35, name: 'Gale (Heavy resistance)' }
     }
   },
 
@@ -152,7 +198,9 @@ const CONFIG = {
     START: 'START',
     PLAYING: 'PLAYING',
     GAME_OVER: 'GAME_OVER',
-    PAUSED: 'PAUSED'
+    PAUSED: 'PAUSED',
+    BOSS_WARNING: 'BOSS_WARNING', // New intermediate state
+    BOSS_BATTLE: 'BOSS_BATTLE'     // New active state
   },
 
   // Input keys
@@ -172,20 +220,34 @@ const CONFIG = {
     DIFFICULTY: 'flappybird_difficulty',
     BIRD_SKIN: 'flappybird_birdskin',
     ACHIEVEMENTS: 'flappybird_achievements',
-    BEST_RUNS: 'flappybird_bestruns'
+    BEST_RUNS: 'flappybird_bestruns',
+    COINS: 'flappybird_coins',               // New
+    UNLOCKED_SKINS: 'flappybird_unlocked_skins', // New
+    QUESTS: 'flappybird_quests'             // New
   },
 
   // Achievement definitions
   ACHIEVEMENTS: [
-    { id: 'first_flight',  title: 'First Flight \uD83D\uDC26',    desc: 'Score your first point!' },
-    { id: 'bronze_flapper',title: 'Bronze Flapper \uD83E\uDD49', desc: 'Reach a score of 10 points.' },
-    { id: 'silver_flapper',title: 'Silver Flapper \uD83E\uDD48', desc: 'Reach a score of 25 points.' },
-    { id: 'gold_flapper',  title: 'Gold Flapper \uD83E\uDD47',   desc: 'Reach a score of 50 points.' },
-    { id: 'shield_master', title: 'Shield Master \uD83D\uDEE1\uFE0F',   desc: 'Collect 3 shields in a single run.' },
-    { id: 'gem_collector', title: 'Gem Collector \uD83D\uDC8E',   desc: 'Collect 5 gems in a single run.' },
-    { id: 'slow_time_lord',title: 'Slow Time Lord \u23F3',        desc: 'Collect 3 slow-motion power-ups in a run.' },
-    { id: 'combo_5',       title: 'Combo Master \uD83D\uDD25',    desc: 'Build a 5x combo without missing.' },
-    { id: 'survivor',      title: 'Survivor \u2764\uFE0F',         desc: 'Finish a run with all 3 lives intact.' }
+    { id: 'first_flight',  title: 'First Flight 🐦',    desc: 'Score your first point!' },
+    { id: 'bronze_flapper',title: 'Bronze Flapper 🥉', desc: 'Reach a score of 10 points.' },
+    { id: 'silver_flapper',title: 'Silver Flapper 🥈', desc: 'Reach a score of 25 points.' },
+    { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' },
+    { id: 'shield_master', title: 'Shield Master 🛡️',   desc: 'Collect 3 shields in a single run.' },
+    { id: 'gem_collector', title: 'Gem Collector 💎',   desc: 'Collect 5 gems in a single run.' },
+    { id: 'slow_time_lord',title: 'Slow Time Lord ⏳',        desc: 'Collect 3 slow-motion power-ups in a run.' },
+    { id: 'combo_5',       title: 'Combo Master 🔥',    desc: 'Build a 5x combo without missing.' },
+    { id: 'survivor',      title: 'Survivor ❤️',         desc: 'Finish a run with all 3 lives intact.' },
+    // New Achievements
+    { id: 'boss_slayer',   title: 'Boss Slayer ⚔️',      desc: 'Defeat your first epic boss.' },
+    { id: 'wealthy_bird',  title: 'Wealthy Bird 💰',     desc: 'Accumulate 100 gold coins.' },
+    { id: 'storm_survivor',title: 'Storm Survivor ⚡',   desc: 'Score 10 points during a Stormy weather phase.' }
+  ],
+
+  // Daily Quests definitions
+  QUESTS: [
+    { id: 'collect_coins', title: 'Coin Collector', desc: 'Collect 15 gold coins', target: 15, reward: 25, metric: 'coins' },
+    { id: 'defeat_boss', title: 'Slayer of Giants', desc: 'Defeat 1 boss encounter', target: 1, reward: 50, metric: 'bosses' },
+    { id: 'high_combo', title: 'Combo Connoisseur', desc: 'Get a 4x combo multiplier', target: 4, reward: 20, metric: 'combo' }
   ],
 
   // Debug mode
@@ -202,6 +264,11 @@ Object.freeze(CONFIG.PIPE);
 Object.freeze(CONFIG.POWERUP);
 Object.freeze(CONFIG.POWERUP.TYPES);
 Object.freeze(CONFIG.POWERUP.COLORS);
+Object.freeze(CONFIG.COIN);
+Object.freeze(CONFIG.BOSS);
+Object.freeze(CONFIG.WEATHER);
+Object.freeze(CONFIG.WEATHER.TYPES);
+Object.freeze(CONFIG.WEATHER.WINDS);
 Object.freeze(CONFIG.DIFFICULTY);
 Object.freeze(CONFIG.VISUALS);
 Object.freeze(CONFIG.VISUALS.THEMES);
@@ -213,3 +280,4 @@ Object.freeze(CONFIG.STATES);
 Object.freeze(CONFIG.KEYS);
 Object.freeze(CONFIG.STORAGE);
 Object.freeze(CONFIG.ACHIEVEMENTS);
+Object.freeze(CONFIG.QUESTS);

@@ -67,10 +67,8 @@ function setupEventListeners() {
   // Skin selector
   skinSelector.addEventListener('change', (e) => {
     const selectedSkin = e.target.value;
-    StorageManager.set(CONFIG.STORAGE.BIRD_SKIN, selectedSkin);
-    if (game && game.bird) {
-      game.bird.skin = selectedSkin;
-      game.draw();
+    if (window.shopManager) {
+      shopManager.equipSkin(selectedSkin);
     }
   });
 
@@ -98,11 +96,20 @@ function loadSettings() {
   
   // Load skin setting
   const savedSkin = StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC');
-  if (skinSelector) {
-    skinSelector.value = savedSkin;
+  
+  if (window.shopManager) {
+    shopManager.equipSkin(savedSkin);
+  } else {
+    if (skinSelector) {
+      skinSelector.value = savedSkin;
+    }
+    if (game && game.bird) {
+      game.bird.skin = savedSkin;
+    }
   }
-  if (game && game.bird) {
-    game.bird.skin = savedSkin;
+
+  if (window.questManager) {
+    questManager.refreshUI();
   }
   
   // Update stats display
@@ -148,7 +155,7 @@ function handleKeyDown(e) {
   if (e.code === 'Space') {
     if (game.state === CONFIG.STATES.START) {
       startGame();
-    } else if (game.state === CONFIG.STATES.PLAYING) {
+    } else if (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE) {
       game.jump();
     }
   }
@@ -167,7 +174,7 @@ function handleKeyDown(e) {
 function handleCanvasClick() {
   if (game.state === CONFIG.STATES.START) {
     startGame();
-  } else if (game.state === CONFIG.STATES.PLAYING) {
+  } else if (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE) {
     game.jump();
   }
 }
@@ -181,7 +188,7 @@ window.addEventListener('beforeunload', () => {
 
 // Handle visibility change (pause when tab is hidden)
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden && game.state === CONFIG.STATES.PLAYING) {
+  if (document.hidden && (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE)) {
     game.pause();
   }
 });
