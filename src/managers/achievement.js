@@ -36,12 +36,6 @@ class AchievementManager {
         case 'gold_flapper':
           if (metric === 'score' && value >= 50) shouldUnlock = true;
           break;
-        case 'shield_master':
-          if (metric === 'shield' && value >= 3) shouldUnlock = true;
-          break;
-        case 'gem_collector':
-          if (metric === 'gem' && value >= 5) shouldUnlock = true;
-          break;
       }
 
       if (shouldUnlock) {

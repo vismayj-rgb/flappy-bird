@@ -91,11 +91,10 @@ class Pipe {
  * Manages all pipes in the game
  */
 class PipeManager {
-  constructor(difficulty = 'MEDIUM', powerUpManager = null) {
+  constructor(difficulty = 'MEDIUM') {
     this.pipes = [];
     this.frameCount = 0;
     this.setDifficulty(difficulty);
-    this.powerUpManager = powerUpManager;
   }
 
   setDifficulty(difficulty) {
@@ -136,10 +135,6 @@ class PipeManager {
     const gapY = Math.random() * (maxGapY - minGapY) + minGapY;
     
     this.pipes.push(new Pipe(CONFIG.CANVAS.WIDTH, gapY));
-
-    if (this.powerUpManager) {
-      this.powerUpManager.spawn(CONFIG.CANVAS.WIDTH, gapY, this.gapHeight);
-    }
   }
 
   draw(ctx, themeColors = null) {

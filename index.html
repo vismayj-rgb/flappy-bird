@@ -20,15 +20,6 @@
     <div class="game-wrapper">
       <canvas id="gameCanvas" width="400" height="600"></canvas>
       
-      <!-- Boss Alert Overlay -->
-      <div id="bossAlertScreen" class="boss-alert-overlay hidden">
-        <div class="boss-alert-content">
-          <span class="warning-icon">⚠</span>
-          <h2>BOSS APPROACHING</h2>
-          <p>Get ready to dodge fireballs and collect energy orbs!</p>
-        </div>
-      </div>
-
       <div id="startScreen" class="overlay">
         <div class="overlay-content">
           <h2>Ready to Play?</h2>
@@ -56,120 +47,65 @@
         <div class="score-display">
           Score: <span id="currentScore">0</span>
         </div>
-        
-        <div id="livesDisplay" class="lives-display"></div>
-        <div id="comboBadge" class="combo-badge" style="display:none;"></div>
-        
-        <!-- Weather & Wind HUD -->
-        <div id="weatherDisplay" class="weather-hud">
-          <div class="weather-row">
-            <span id="weatherIcon" class="weather-icon">☀️</span>
-            <span id="weatherLabel" class="weather-label">Clear</span>
-          </div>
-          <div id="windVane" class="wind-vane">
-            <span id="windArrow" class="wind-arrow">➔</span>
-            <span id="windSpeed" class="wind-speed">Calm</span>
-          </div>
-        </div>
-
-        <!-- Coin Counter HUD -->
-        <div class="coin-hud">
-          🪙 <span class="coin-balance-val">0</span>
-        </div>
-
-        <!-- Boss Health HUD (visible during boss fight) -->
-        <div id="bossHealthHUD" class="boss-health-hud hidden">
-          <div class="boss-hud-title">👾 BOSS ENCOUNTER</div>
-          <div class="boss-hud-bar-bg">
-            <div id="bossHudHealth" class="boss-hud-bar-fill" style="width: 100%;"></div>
-          </div>
-        </div>
-
         <div class="controls-hint">
           SPACE / CLICK to jump
         </div>
       </div>
     </div>
 
-    <!-- Info columns -->
-    <div class="info-grid">
-      <!-- Left Column: Gameplay Info, Stats & Settings -->
-      <div class="info-panel col-left">
-        <div class="stats">
-          <div class="stat-item">
-            <span class="stat-label">Games Played:</span>
-            <span class="stat-value" id="gamesPlayed">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Total Score:</span>
-            <span class="stat-value" id="totalScore">0</span>
-          </div>
+    <!-- Info panel -->
+    <div class="info-panel">
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Games Played:</span>
+          <span class="stat-value" id="gamesPlayed">0</span>
         </div>
-        
-        <div class="settings">
-          <h3>Settings</h3>
-          <label class="setting-item">
-             <input type="checkbox" id="soundToggle" checked>
-             <span>Sound Effects</span>
-          </label>
-          <label class="setting-item">
-            <input type="range" id="difficultySlider" min="1" max="5" value="3">
-            <span>Difficulty: <span id="difficultyValue">Medium</span></span>
-          </label>
-          <label class="setting-item select-item">
-            <span>Bird Skin:</span>
-            <select id="skinSelector">
-              <option value="CLASSIC">Classic Gold</option>
-              <option value="RUBY">Ruby Red</option>
-              <option value="EMERALD">Neon Emerald</option>
-              <option value="VORTEX">Vortex Violet</option>
-            </select>
-          </label>
+        <div class="stat-item">
+          <span class="stat-label">Total Score:</span>
+          <span class="stat-value" id="totalScore">0</span>
         </div>
+      </div>
+      
+      <div class="settings">
+        <h3>Settings</h3>
+        <label class="setting-item">
+           <input type="checkbox" id="soundToggle" checked>
+           <span>Sound Effects</span>
+        </label>
+        <label class="setting-item">
+          <input type="range" id="difficultySlider" min="1" max="5" value="3">
+          <span>Difficulty: <span id="difficultyValue">Medium</span></span>
+        </label>
+        <label class="setting-item select-item">
+          <span>Bird Skin:</span>
+          <select id="skinSelector">
+            <option value="CLASSIC">Classic Gold</option>
+            <option value="RUBY">Ruby Red</option>
+            <option value="EMERALD">Neon Emerald</option>
+            <option value="VORTEX">Vortex Violet</option>
+          </select>
+        </label>
+      </div>
 
-        <div class="best-runs">
-          <h3>🏆 Best Runs</h3>
-          <table class="run-table">
-            <thead>
-              <tr>
-                <th>#</th><th>Score</th><th>Difficulty</th><th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="bestRunsBody">
-              <!-- Dynamically loaded -->
-            </tbody>
-          </table>
+      <div class="achievements">
+        <h3>Achievements</h3>
+        <div id="achievementsList" class="achievements-list">
+          <!-- Dynamically loaded -->
         </div>
       </div>
 
-      <!-- Right Column: Shop, Daily Quests & Achievements -->
-      <div class="info-panel col-right">
-        <!-- Skin Shop -->
-        <div class="shop-panel">
-          <h3>🛍️ Cosmetic Skin Shop</h3>
-          <div class="shop-balance">
-            Your Gold: <strong class="gold-text">🪙 <span class="coin-balance-val">0</span></strong>
-          </div>
-          <div id="shopSkinsList" class="shop-skins-list">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-        <!-- Quest Log -->
-        <div class="quests-panel">
-          <h3>📜 Daily Quests</h3>
-          <div id="questsList" class="quests-list">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-        <!-- Achievements -->
-        <div class="achievements">
-          <h3>Achievements</h3>
-          <div id="achievementsList" class="achievements-list">
+      <div class="best-runs">
+        <h3>🏆 Best Runs</h3>
+        <table class="run-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Score</th><th>Difficulty</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="bestRunsBody">
             <!-- Dynamically loaded -->
-          </div>
-        </div>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -184,14 +120,9 @@
   <script src="src/utils/sound.js"></script>
   <script src="src/entities/bird.js"></script>
   <script src="src/entities/pipe.js"></script>
-  <script src="src/entities/powerup.js"></script>
-  <script src="src/entities/coin.js"></script>
-  <script src="src/entities/boss.js"></script>
   <script src="src/managers/collision.js"></script>
   <script src="src/managers/score.js"></script>
   <script src="src/managers/achievement.js"></script>
-  <script src="src/managers/shop.js"></script>
-  <script src="src/managers/quest.js"></script>
   <script src="src/managers/runlog.js"></script>
   <script src="src/game.js"></script>
   <script src="src/main.js"></script>

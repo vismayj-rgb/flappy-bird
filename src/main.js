@@ -67,8 +67,10 @@ function setupEventListeners() {
   // Skin selector
   skinSelector.addEventListener('change', (e) => {
     const selectedSkin = e.target.value;
-    if (window.shopManager) {
-      shopManager.equipSkin(selectedSkin);
+    StorageManager.set(CONFIG.STORAGE.BIRD_SKIN, selectedSkin);
+    if (game && game.bird) {
+      game.bird.skin = selectedSkin;
+      game.draw();
     }
   });
 
@@ -96,20 +98,11 @@ function loadSettings() {
   
   // Load skin setting
   const savedSkin = StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC');
-  
-  if (window.shopManager) {
-    shopManager.equipSkin(savedSkin);
-  } else {
-    if (skinSelector) {
-      skinSelector.value = savedSkin;
-    }
-    if (game && game.bird) {
-      game.bird.skin = savedSkin;
-    }
+  if (skinSelector) {
+    skinSelector.value = savedSkin;
   }
-
-  if (window.questManager) {
-    questManager.refreshUI();
+  if (game && game.bird) {
+    game.bird.skin = savedSkin;
   }
   
   // Update stats display
@@ -124,9 +117,6 @@ function loadSettings() {
   if (window.runLogManager) {
     runLogManager.refreshUI();
   }
-
-  // Init lives display
-  game.updateLivesDisplay();
 }
 
 function startGame() {
@@ -155,7 +145,7 @@ function handleKeyDown(e) {
   if (e.code === 'Space') {
     if (game.state === CONFIG.STATES.START) {
       startGame();
-    } else if (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE) {
+    } else if (game.state === CONFIG.STATES.PLAYING) {
       game.jump();
     }
   }
@@ -174,7 +164,7 @@ function handleKeyDown(e) {
 function handleCanvasClick() {
   if (game.state === CONFIG.STATES.START) {
     startGame();
-  } else if (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE) {
+  } else if (game.state === CONFIG.STATES.PLAYING) {
     game.jump();
   }
 }
@@ -188,7 +178,7 @@ window.addEventListener('beforeunload', () => {
 
 // Handle visibility change (pause when tab is hidden)
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden && (game.state === CONFIG.STATES.PLAYING || game.state === CONFIG.STATES.BOSS_BATTLE)) {
+  if (document.hidden && game.state === CONFIG.STATES.PLAYING) {
     game.pause();
   }
 });
