@@ -152,7 +152,9 @@ const CONFIG = {
     DIFFICULTY: 'flappybird_difficulty',
     BIRD_SKIN: 'flappybird_birdskin',
     ACHIEVEMENTS: 'flappybird_achievements',
-    BEST_RUNS: 'flappybird_bestruns'
+    BEST_RUNS: 'flappybird_bestruns',
+    GHOST_RUN: 'flappybird_ghostrun', // New
+    MUTATORS: 'flappybird_mutators'     // New
   },
 
   // Achievement definitions
@@ -162,6 +164,14 @@ const CONFIG = {
     { id: 'silver_flapper',title: 'Silver Flapper 🥈', desc: 'Reach a score of 25 points.' },
     { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' }
   ],
+
+  // Mutator configurations
+  MUTATORS: {
+    LOW_GRAVITY: { id: 'low_gravity', name: 'Floaty Gravity', desc: 'Half gravity and floaty jumps' },
+    DOUBLE_SPEED: { id: 'double_speed', name: 'Hyper Speed', desc: '1.5x speed multiplier' },
+    TINY_BIRD: { id: 'tiny_bird', name: 'Tiny Bird', desc: 'Half-sized bird to fly easily' },
+    DRUNK_MODE: { id: 'drunk_mode', name: 'Drunk Flight', desc: 'Horizontal weaving wobble' }
+  },
 
   // Debug mode
   DEBUG: false
@@ -185,3 +195,8 @@ Object.freeze(CONFIG.STATES);
 Object.freeze(CONFIG.KEYS);
 Object.freeze(CONFIG.STORAGE);
 Object.freeze(CONFIG.ACHIEVEMENTS);
+Object.freeze(CONFIG.MUTATORS);
+Object.freeze(CONFIG.MUTATORS.LOW_GRAVITY);
+Object.freeze(CONFIG.MUTATORS.DOUBLE_SPEED);
+Object.freeze(CONFIG.MUTATORS.TINY_BIRD);
+Object.freeze(CONFIG.MUTATORS.DRUNK_MODE);

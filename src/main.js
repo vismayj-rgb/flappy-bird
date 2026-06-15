@@ -104,6 +104,11 @@ function loadSettings() {
   if (game && game.bird) {
     game.bird.skin = savedSkin;
   }
+
+  // Load mutator check-boxes
+  if (window.mutatorManager) {
+    mutatorManager.refreshUI();
+  }
   
   // Update stats display
   game.scoreManager.updateDisplay();
