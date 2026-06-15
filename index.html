@@ -44,11 +44,6 @@
       </div>
 
       <div class="game-ui">
-        <!-- Day/Night Cycle Status display -->
-        <div id="timeOfDayHUD" class="time-hud">
-          🌅 Day
-        </div>
-
         <div class="score-display">
           Score: <span id="currentScore">0</span>
         </div>
@@ -58,105 +53,59 @@
       </div>
     </div>
 
-    <!-- Info panels -->
-    <div class="info-grid">
-      <!-- Panel 1: Stats & Settings -->
-      <div class="info-panel">
-        <div class="stats">
-          <div class="stat-item">
-            <span class="stat-label">Games Played:</span>
-            <span class="stat-value" id="gamesPlayed">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">Total Score:</span>
-            <span class="stat-value" id="totalScore">0</span>
-          </div>
+    <!-- Info panel -->
+    <div class="info-panel">
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Games Played:</span>
+          <span class="stat-value" id="gamesPlayed">0</span>
         </div>
-        
-        <div class="settings">
-          <h3>Settings</h3>
-          <label class="setting-item">
-             <input type="checkbox" id="soundToggle" checked>
-             <span>Sound Effects</span>
-          </label>
-          <label class="setting-item">
-            <input type="range" id="difficultySlider" min="1" max="5" value="3">
-            <span>Difficulty: <span id="difficultyValue">Medium</span></span>
-          </label>
-          <label class="setting-item select-item">
-            <span>Bird Skin:</span>
-            <select id="skinSelector">
-              <option value="CLASSIC">Classic Gold</option>
-              <option value="RUBY">Ruby Red</option>
-              <option value="EMERALD">Neon Emerald</option>
-              <option value="VORTEX">Vortex Violet</option>
-            </select>
-          </label>
+        <div class="stat-item">
+          <span class="stat-label">Total Score:</span>
+          <span class="stat-value" id="totalScore">0</span>
+        </div>
+      </div>
+      
+      <div class="settings">
+        <h3>Settings</h3>
+        <label class="setting-item">
+           <input type="checkbox" id="soundToggle" checked>
+           <span>Sound Effects</span>
+        </label>
+        <label class="setting-item">
+          <input type="range" id="difficultySlider" min="1" max="5" value="3">
+          <span>Difficulty: <span id="difficultyValue">Medium</span></span>
+        </label>
+        <label class="setting-item select-item">
+          <span>Bird Skin:</span>
+          <select id="skinSelector">
+            <option value="CLASSIC">Classic Gold</option>
+            <option value="RUBY">Ruby Red</option>
+            <option value="EMERALD">Neon Emerald</option>
+            <option value="VORTEX">Vortex Violet</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="achievements">
+        <h3>Achievements</h3>
+        <div id="achievementsList" class="achievements-list">
+          <!-- Dynamically loaded -->
         </div>
       </div>
 
-      <!-- Panel 2: Interactive Gameplay Mutators -->
-      <div class="info-panel">
-        <div class="mutators-panel">
-          <h3>⚡ Gameplay Mutators</h3>
-          <div class="mutators-list">
-            <label class="mutator-item">
-              <input type="checkbox" id="mutator_low_gravity" onchange="mutatorManager.toggle('low_gravity')">
-              <div class="mutator-text">
-                <span class="mutator-title">Floaty Gravity</span>
-                <span class="mutator-desc">Halve bird gravity & float jumps</span>
-              </div>
-            </label>
-            <label class="mutator-item">
-              <input type="checkbox" id="mutator_double_speed" onchange="mutatorManager.toggle('double_speed')">
-              <div class="mutator-text">
-                <span class="mutator-title">Hyper Speed</span>
-                <span class="mutator-desc">1.5x gameplay speed multiplier</span>
-              </div>
-            </label>
-            <label class="mutator-item">
-              <input type="checkbox" id="mutator_tiny_bird" onchange="mutatorManager.toggle('tiny_bird')">
-              <div class="mutator-text">
-                <span class="mutator-title">Tiny Bird</span>
-                <span class="mutator-desc">Half bird dimensions for easy fits</span>
-              </div>
-            </label>
-            <label class="mutator-item">
-              <input type="checkbox" id="mutator_drunk_mode" onchange="mutatorManager.toggle('drunk_mode')">
-              <div class="mutator-text">
-                <span class="mutator-title">Drunk Flight</span>
-                <span class="mutator-desc">Bird wobbles weaving side-to-side</span>
-              </div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel 3: Achievements -->
-      <div class="info-panel">
-        <div class="achievements">
-          <h3>Achievements</h3>
-          <div id="achievementsList" class="achievements-list">
+      <div class="best-runs">
+        <h3>🏆 Best Runs</h3>
+        <table class="run-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Score</th><th>Difficulty</th><th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="bestRunsBody">
             <!-- Dynamically loaded -->
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel 4: Best Runs -->
-      <div class="info-panel">
-        <div class="best-runs">
-          <h3>🏆 Best Runs</h3>
-          <table class="run-table">
-            <thead>
-              <tr>
-                <th>#</th><th>Score</th><th>Difficulty</th><th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="bestRunsBody">
-              <!-- Dynamically loaded -->
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -172,8 +121,6 @@
   <script src="src/entities/bird.js"></script>
   <script src="src/entities/pipe.js"></script>
   <script src="src/managers/collision.js"></script>
-  <script src="src/managers/ghost.js"></script>
-  <script src="src/managers/mutator.js"></script>
   <script src="src/managers/score.js"></script>
   <script src="src/managers/achievement.js"></script>
   <script src="src/managers/runlog.js"></script>
