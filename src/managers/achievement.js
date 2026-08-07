@@ -36,6 +36,15 @@ class AchievementManager {
         case 'gold_flapper':
           if (metric === 'score' && value >= 50) shouldUnlock = true;
           break;
+        case 'coin_rookie':
+          if (metric === 'coins_total' && value >= 1) shouldUnlock = true;
+          break;
+        case 'coin_collector':
+          if (metric === 'coins_total' && value >= 25) shouldUnlock = true;
+          break;
+        case 'coin_hoarder':
+          if (metric === 'coins_total' && value >= 100) shouldUnlock = true;
+          break;
       }
 
       if (shouldUnlock) {

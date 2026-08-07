@@ -14,6 +14,7 @@ class Game {
     this.bird = new Bird();
     this.pipeManager = new PipeManager(this.difficulty);
     this.scoreManager = new ScoreManager();
+    this.coinManager = new CoinManager();
     
     // Animation frame reference
     this.animationFrameId = null;
@@ -61,6 +62,8 @@ class Game {
     this.bird.reset();
     this.pipeManager.reset();
     this.scoreManager.reset();
+    this.coinManager.reset();
+    window._coinPopups = [];
     
     // Load skin settings on start
     const savedSkin = StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC');
@@ -85,7 +88,10 @@ class Game {
     if (window.runLogManager) {
       runLogManager.record(this.scoreManager.currentScore, this.difficulty);
     }
-    
+
+    // Refresh coin stats
+    this.coinManager.refreshStatsUI();
+
     // Show game over screen
     const gameOverScreen = document.getElementById('gameOverScreen');
     if (gameOverScreen) {
@@ -113,6 +119,11 @@ class Game {
     this.pipeManager.frameCount++;
     if (this.pipeManager.frameCount >= this.pipeManager.spawnInterval) {
       this.pipeManager.spawn();
+      // Try to spawn a coin in the gap of the just-spawned pipe
+      const newPipe = this.pipeManager.pipes[this.pipeManager.pipes.length - 1];
+      if (newPipe) {
+        this.coinManager.trySpawnForPipe(newPipe.x, newPipe.gapY, this.pipeManager.gapHeight);
+      }
       this.pipeManager.frameCount = 0;
     }
     
@@ -139,6 +150,17 @@ class Game {
       return;
     }
 
+    // Update coins and collect bonuses
+    const coinBonus = this.coinManager.update(this.pipeManager.speed, this.bird);
+    if (coinBonus > 0) {
+      this.scoreManager.increment(coinBonus);
+      if (window.achievementManager) {
+        achievementManager.check('coins_total', this.coinManager.totalCollected);
+        achievementManager.check('score', this.scoreManager.currentScore);
+      }
+      this.coinManager.refreshStatsUI();
+    }
+
     // Check scoring
     if (CollisionManager.checkScoring(this.bird, this.pipeManager.getPipes())) {
       this.scoreManager.increment(1);
@@ -161,6 +183,9 @@ class Game {
 
     // Draw pipes
     this.pipeManager.draw(this.ctx, this.getThemeColors());
+
+    // Draw coins
+    this.coinManager.draw(this.ctx);
 
     // Draw bird
     this.bird.draw(this.ctx);

@@ -152,15 +152,19 @@ const CONFIG = {
     DIFFICULTY: 'flappybird_difficulty',
     BIRD_SKIN: 'flappybird_birdskin',
     ACHIEVEMENTS: 'flappybird_achievements',
-    BEST_RUNS: 'flappybird_bestruns'
+    BEST_RUNS: 'flappybird_bestruns',
+    TOTAL_COINS: 'flappybird_totalcoins'
   },
 
   // Achievement definitions
   ACHIEVEMENTS: [
-    { id: 'first_flight',  title: 'First Flight 🐦',    desc: 'Score your first point!' },
-    { id: 'bronze_flapper',title: 'Bronze Flapper 🥉', desc: 'Reach a score of 10 points.' },
-    { id: 'silver_flapper',title: 'Silver Flapper 🥈', desc: 'Reach a score of 25 points.' },
-    { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' }
+    { id: 'first_flight',   title: 'First Flight 🐦',     desc: 'Score your first point!' },
+    { id: 'bronze_flapper', title: 'Bronze Flapper 🥉',   desc: 'Reach a score of 10 points.' },
+    { id: 'silver_flapper', title: 'Silver Flapper 🥈',   desc: 'Reach a score of 25 points.' },
+    { id: 'gold_flapper',   title: 'Gold Flapper 🥇',     desc: 'Reach a score of 50 points.' },
+    { id: 'coin_rookie',    title: 'Coin Rookie ✦',       desc: 'Collect your first coin.' },
+    { id: 'coin_collector', title: 'Coin Collector 💰',   desc: 'Collect 25 coins total.' },
+    { id: 'coin_hoarder',   title: 'Coin Hoarder 🏅',     desc: 'Collect 100 coins total.' }
   ],
 
   // Debug mode
