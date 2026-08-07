@@ -117,6 +117,11 @@ function loadSettings() {
   if (window.runLogManager) {
     runLogManager.refreshUI();
   }
+
+  // Refresh coin stats
+  if (game && game.coinManager) {
+    game.coinManager.refreshStatsUI();
+  }
 }
 
 function startGame() {

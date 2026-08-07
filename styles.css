@@ -540,6 +540,16 @@ footer a:hover {
 
 
 
+/* ==================== COIN SYSTEM ==================== */
+.coin-stat {
+  color: #F6AD55;
+}
+
+.coin-stat::before {
+  content: '✦ ';
+  font-size: 0.9em;
+}
+
 /* ==================== ANIMATIONS ==================== */
 @keyframes pulse {
   0%, 100% {
