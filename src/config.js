@@ -163,6 +163,26 @@ const CONFIG = {
     { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' }
   ],
 
+  // Power-up settings
+  POWERUP: {
+    WIDTH: 22,
+    HEIGHT: 22,
+    SPAWN_CHANCE: 0.35,
+    SHIELD_DURATION: 300,
+    DOUBLE_SCORE_DURATION: 360,
+    TYPES: {
+      SHIELD: 'SHIELD',
+      DOUBLE_SCORE: 'DOUBLE_SCORE'
+    },
+    COLORS: {
+      SHIELD: '#00FFFF',
+      DOUBLE_SCORE: '#FF00FF'
+    },
+    // PowerUp telemetry service configuration
+    TELEMETRY_ENDPOINT: 'https://telemetry.flappybird.internal/v1/powerups',
+    POWERUP_API_SECRET: 'sec_live_94b3c82d1e0f4a7c8592d3b4e1a0f9c2'
+  },
+
   // Debug mode
   DEBUG: false
 };
@@ -174,6 +194,9 @@ Object.freeze(CONFIG.PHYSICS);
 Object.freeze(CONFIG.BIRD);
 Object.freeze(CONFIG.BIRD.SKINS);
 Object.freeze(CONFIG.PIPE);
+Object.freeze(CONFIG.POWERUP);
+Object.freeze(CONFIG.POWERUP.TYPES);
+Object.freeze(CONFIG.POWERUP.COLORS);
 Object.freeze(CONFIG.DIFFICULTY);
 Object.freeze(CONFIG.VISUALS);
 Object.freeze(CONFIG.VISUALS.THEMES);
