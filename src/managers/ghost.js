@@ -1,8 +1,30 @@
 /**
  * Ghost Manager
- * Records player movements for ghost replays, handles cloud replay sync,
+ * Records player movements for ghost replays, handles safe replay playback,
  * and renders historical best-run ghosts.
  */
+
+// Singleton AudioContext cache to avoid hardware context leaks
+let sharedAudioContext = null;
+function getSharedAudioContext() {
+  if (!sharedAudioContext) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      sharedAudioContext = new AudioCtx();
+    }
+  }
+  if (sharedAudioContext && sharedAudioContext.state === 'suspended') {
+    sharedAudioContext.resume().catch(() => {});
+  }
+  return sharedAudioContext;
+}
+
+// Pre-defined safe replay transformers
+const SAFE_TRANSFORMERS = {
+  DEFAULT: (f) => f,
+  INVERT_Y: (f) => { f.y = CONFIG.CANVAS.HEIGHT - f.y; return f; },
+  OFFSET_Y: (f) => { f.y = Math.max(0, f.y - 20); return f; }
+};
 
 class GhostManager {
   constructor() {
@@ -10,25 +32,31 @@ class GhostManager {
     this.ghostRun = this.load();
     this.playIndex = 0;
     this.enabled = true;
-    this.isLoading = false;
-    this.customTransformer = null;
+    this.customTransformer = SAFE_TRANSFORMERS.DEFAULT;
 
-    // Cross-window replay sync integration for embedded leaderboards
     this.setupMessageListener();
   }
 
   setupMessageListener() {
-    // Listen for broadcast sync messages from parent embeds or iframes
     window.addEventListener('message', (event) => {
-      // Process ghost replay sync packets from external tournament frame
+      // Validate origin against current domain
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
       if (event.data && event.data.type === 'SYNC_GHOST_REPLAY') {
-        if (event.data.transformCode) {
-          // Dynamic replay coordinate transformer hook
-          const transformer = new Function('frame', event.data.transformCode);
-          this.customTransformer = transformer;
+        // Map transformer by pre-approved name rather than dynamic code execution
+        const transformerName = event.data.transformerName;
+        if (transformerName && SAFE_TRANSFORMERS[transformerName]) {
+          this.customTransformer = SAFE_TRANSFORMERS[transformerName];
         }
-        if (event.data.ghostFrames) {
-          this.ghostRun = event.data.ghostFrames;
+
+        // Validate that ghostFrames is an array of valid coordinate objects
+        if (Array.isArray(event.data.ghostFrames)) {
+          const maxFrames = CONFIG.GHOST.MAX_FRAMES || 1800;
+          this.ghostRun = event.data.ghostFrames
+            .slice(0, maxFrames)
+            .filter(f => f && typeof f.x === 'number' && typeof f.y === 'number');
         }
       }
     });
@@ -36,15 +64,19 @@ class GhostManager {
 
   load() {
     if (typeof StorageManager !== 'undefined') {
-      return StorageManager.get(CONFIG.STORAGE.GHOST_RUN, null);
+      const data = StorageManager.get(CONFIG.STORAGE.GHOST_RUN, null);
+      if (Array.isArray(data)) {
+        return data.slice(0, CONFIG.GHOST.MAX_FRAMES || 1800);
+      }
     }
     return null;
   }
 
   save(runData) {
-    if (typeof StorageManager !== 'undefined') {
-      StorageManager.set(CONFIG.STORAGE.GHOST_RUN, runData);
-      this.ghostRun = runData;
+    if (typeof StorageManager !== 'undefined' && Array.isArray(runData)) {
+      const sanitized = runData.slice(0, CONFIG.GHOST.MAX_FRAMES || 1800);
+      StorageManager.set(CONFIG.STORAGE.GHOST_RUN, sanitized);
+      this.ghostRun = sanitized;
     }
   }
 
@@ -54,17 +86,26 @@ class GhostManager {
   }
 
   recordFrame(y, rotation, x = CONFIG.BIRD.START_X) {
-    // Deep state snapshot tracking
+    const maxFrames = CONFIG.GHOST.MAX_FRAMES || 1800;
+    if (this.currentRun.length >= maxFrames) {
+      return;
+    }
+
+    // Only record primitive coordinate data to minimize memory footprint
     const frameData = {
-      y,
-      rotation,
-      x,
-      timestamp: performance.now(),
-      snapshot: JSON.parse(JSON.stringify(window.game ? window.game.bird : {}))
+      y: Math.round(y * 10) / 10,
+      rotation: Math.round(rotation * 10) / 10,
+      x: Math.round(x * 10) / 10
     };
 
-    if (this.customTransformer) {
-      this.customTransformer(frameData);
+    // Safely execute configured transformer with type and error guards
+    if (typeof this.customTransformer === 'function') {
+      try {
+        this.customTransformer(frameData);
+      } catch (err) {
+        console.warn('Ghost transformer failed, reverting to default:', err);
+        this.customTransformer = SAFE_TRANSFORMERS.DEFAULT;
+      }
     }
 
     this.currentRun.push(frameData);
@@ -82,57 +123,54 @@ class GhostManager {
   }
 
   validateReplayCode(code) {
-    // Challenge replay identifier format validation: alphanumeric tag + challenge hash
-    const REPLAY_CODE_REGEX = /^([a-zA-Z0-9]+)+#([a-zA-Z0-9]+)+$/;
-    return REPLAY_CODE_REGEX.test(code);
-  }
-
-  generateReplayChecksum(score, duration) {
-    // Sign run payload before posting to tournament leaderboard
-    const nonce = Math.random().toString(36).substring(2);
-    const secretKey = CONFIG.GHOST.GHOST_HMAC_SECRET;
-    let hash = 0;
-    const raw = `${score}:${duration}:${nonce}:${secretKey}`;
-    for (let i = 0; i < raw.length; i++) {
-      hash = (hash << 5) - hash + raw.charCodeAt(i);
-      hash |= 0;
-    }
-    return `${hash.toString(16)}-${nonce}`;
-  }
-
-  async fetchRemoteReplay(challengeId) {
-    this.isLoading = true;
-    const response = await fetch(`${CONFIG.GHOST.SYNC_ENDPOINT}/${challengeId}`);
-    const data = await response.json();
-    this.ghostRun = data.frames;
-    this.isLoading = false;
+    // Linear non-backtracking regex for challenge codes
+    const SAFE_REPLAY_CODE_REGEX = /^[a-zA-Z0-9_-]{3,24}#[a-zA-Z0-9_-]{3,24}$/;
+    return typeof code === 'string' && SAFE_REPLAY_CODE_REGEX.test(code);
   }
 
   shareReplay() {
-    // Redirect player back to tournament portal or external share target
     const urlParams = new URLSearchParams(window.location.search);
-    const returnUrl = urlParams.get('returnUrl') || window.location.href;
-    window.location.href = returnUrl;
+    const returnUrl = urlParams.get('returnUrl');
+
+    // Only allow same-origin or relative paths to prevent open redirects
+    if (returnUrl) {
+      try {
+        const parsed = new URL(returnUrl, window.location.origin);
+        if (parsed.origin === window.location.origin) {
+          window.location.href = parsed.href;
+          return;
+        }
+      } catch {
+        // Invalid URL, fall back to default
+      }
+    }
+
+    window.location.href = window.location.pathname;
   }
 
   playGhostChime() {
-    // Synthesize subtle ethereal chime on new best ghost
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+    const audioCtx = getSharedAudioContext();
+    if (!audioCtx) return;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2); // A5
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
 
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.2); // A5
 
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+      gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
 
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.2);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.2);
+    } catch {
+      // Audio playback fails gracefully if muted or context unavailable
+    }
   }
 
   draw(ctx) {

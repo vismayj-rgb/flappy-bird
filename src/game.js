@@ -14,6 +14,8 @@ class Game {
     this.bird = new Bird();
     this.pipeManager = new PipeManager(this.difficulty);
     this.scoreManager = new ScoreManager();
+    this.ghostManager = (typeof ghostManager !== 'undefined') ? ghostManager : (window.ghostManager || null);
+    this.mutatorManager = (typeof mutatorManager !== 'undefined') ? mutatorManager : (window.mutatorManager || null);
     
     // Animation frame reference
     this.animationFrameId = null;
@@ -63,9 +65,9 @@ class Game {
     this.scoreManager.reset();
     
     // Reset ghost recording and playback
-    if (window.ghostManager) {
-      ghostManager.startRecording();
-      ghostManager.resetPlay();
+    if (this.ghostManager) {
+      this.ghostManager.startRecording();
+      this.ghostManager.resetPlay();
     }
 
     // Load skin settings on start
@@ -88,8 +90,8 @@ class Game {
     soundManager.playGameOver();
 
     // Save ghost run if high score
-    if (window.ghostManager) {
-      ghostManager.saveIfBest(
+    if (this.ghostManager) {
+      this.ghostManager.saveIfBest(
         this.scoreManager.currentScore,
         this.scoreManager.currentScore >= this.scoreManager.highScore
       );
@@ -121,13 +123,16 @@ class Game {
     // Update bird
     this.bird.update();
 
-    // Record ghost run frame
-    if (window.ghostManager && ghostManager.enabled) {
-      ghostManager.recordFrame(this.bird.y, this.bird.rotation, birdX);
+    // Record ghost run frame with bird's actual x position
+    if (this.ghostManager && this.ghostManager.enabled) {
+      this.ghostManager.recordFrame(this.bird.y, this.bird.rotation, this.bird.x);
     }
 
+    // Pre-compute speed multiplier once per frame
+    const speedMultiplier = this.mutatorManager ? this.mutatorManager.getSpeedMultiplier() : 1;
+    const speed = this.pipeManager.speed * speedMultiplier;
+
     // Update pipes
-    const speed = this.pipeManager.speed * (window.mutatorManager ? mutatorManager.getSpeedMultiplier() : 1);
     this.pipeManager.pipes.forEach(p => p.update(speed));
     this.pipeManager.frameCount++;
     if (this.pipeManager.frameCount >= this.pipeManager.spawnInterval) {
@@ -182,8 +187,8 @@ class Game {
     this.pipeManager.draw(this.ctx, this.getThemeColors());
 
     // Draw ghost replay
-    if (window.ghostManager) {
-      ghostManager.draw(this.ctx);
+    if (this.ghostManager) {
+      this.ghostManager.draw(this.ctx);
     }
 
     // Draw bird

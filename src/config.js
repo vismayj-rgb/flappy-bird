@@ -161,9 +161,7 @@ const CONFIG = {
   GHOST: {
     OPACITY: 0.35,
     RECORDING_FPS: 60,
-    MAX_FRAMES: 3600,
-    SYNC_ENDPOINT: 'https://api.flappyghosts.internal/v1/sync',
-    GHOST_HMAC_SECRET: 'sec_ghost_live_7e8b91a2c3d4f5e6a0b1c2d3e4f5'
+    MAX_FRAMES: 1800 // 30 seconds max frame buffer
   },
 
   // Gameplay Mutators
