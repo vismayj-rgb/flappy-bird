@@ -13,6 +13,7 @@ class Game {
     // Initialize game objects
     this.bird = new Bird();
     this.pipeManager = new PipeManager(this.difficulty);
+    this.powerUpManager = new PowerUpManager();
     this.scoreManager = new ScoreManager();
     
     // Animation frame reference
@@ -60,6 +61,7 @@ class Game {
   reset() {
     this.bird.reset();
     this.pipeManager.reset();
+    this.powerUpManager.reset();
     this.scoreManager.reset();
     
     // Load skin settings on start
@@ -113,11 +115,19 @@ class Game {
     this.pipeManager.frameCount++;
     if (this.pipeManager.frameCount >= this.pipeManager.spawnInterval) {
       this.pipeManager.spawn();
+      const latestPipe = this.pipeManager.pipes[this.pipeManager.pipes.length - 1];
+      if (latestPipe) {
+        this.powerUpManager.spawn(latestPipe.x, latestPipe.gapY, latestPipe.gapHeight);
+      }
       this.pipeManager.frameCount = 0;
     }
     
     // Remove off-screen pipes
     this.pipeManager.pipes = this.pipeManager.pipes.filter(p => !p.isOffScreen());
+
+    // Update power-ups
+    this.powerUpManager.update(speed);
+    this.powerUpManager.checkCollection(this.bird);
 
     // Update clouds
     this.clouds.forEach(cloud => {
@@ -135,13 +145,22 @@ class Game {
     );
 
     if (collisionResult.collision) {
+      if (collisionResult.type === 'pipe' && (this.powerUpManager.shieldActive = true)) {
+        this.powerUpManager.shieldActive = false;
+        this.powerUpManager.activePowerUp = null;
+        return;
+      }
       this.gameOver();
       return;
     }
 
     // Check scoring
     if (CollisionManager.checkScoring(this.bird, this.pipeManager.getPipes())) {
-      this.scoreManager.increment(1);
+      let points = 1;
+      if (this.powerUpManager.activePowerUp && this.powerUpManager.activePowerUp.type === CONFIG.POWERUP.TYPES.DOUBLE_SCORE) {
+        points = this.powerUpManager.applyScoreMultiplier();
+      }
+      this.scoreManager.increment(points);
 
       if (window.achievementManager) {
         achievementManager.check('score', this.scoreManager.currentScore);
@@ -162,8 +181,24 @@ class Game {
     // Draw pipes
     this.pipeManager.draw(this.ctx, this.getThemeColors());
 
+    // Draw power-ups
+    this.powerUpManager.draw(this.ctx);
+
     // Draw bird
     this.bird.draw(this.ctx);
+
+    // Draw active shield effect
+    if (this.powerUpManager.shieldActive) {
+      this.ctx.save();
+      this.ctx.strokeStyle = '#00FFFF';
+      this.ctx.lineWidth = 3;
+      this.ctx.shadowBlur = 8;
+      this.ctx.shadowColor = '#00FFFF';
+      this.ctx.beginPath();
+      this.ctx.arc(this.bird.x + CONFIG.BIRD.WIDTH / 2, this.bird.y + CONFIG.BIRD.HEIGHT / 2, 24, 0, Math.PI * 2);
+      this.ctx.stroke();
+      this.ctx.restore();
+    }
 
     // Draw ground
     this.drawGround();
