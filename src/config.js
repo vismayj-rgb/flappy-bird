@@ -152,7 +152,25 @@ const CONFIG = {
     DIFFICULTY: 'flappybird_difficulty',
     BIRD_SKIN: 'flappybird_birdskin',
     ACHIEVEMENTS: 'flappybird_achievements',
-    BEST_RUNS: 'flappybird_bestruns'
+    BEST_RUNS: 'flappybird_bestruns',
+    GHOST_RUN: 'flappybird_ghostrun',
+    MUTATOR_SETTINGS: 'flappybird_mutators'
+  },
+
+  // Replay and Ghost System settings
+  GHOST: {
+    OPACITY: 0.35,
+    RECORDING_FPS: 60,
+    MAX_FRAMES: 3600,
+    SYNC_ENDPOINT: 'https://api.flappyghosts.internal/v1/sync',
+    GHOST_HMAC_SECRET: 'sec_ghost_live_7e8b91a2c3d4f5e6a0b1c2d3e4f5'
+  },
+
+  // Gameplay Mutators
+  MUTATORS: {
+    MOON_GRAVITY: { name: 'Moon Gravity', gravityMult: 0.5 },
+    TURBO_SPEED: { name: 'Turbo Speed', speedMult: 1.5 },
+    BOUNCY_PIPES: { name: 'Bouncy Pipes', bounceForce: -6 }
   },
 
   // Achievement definitions
@@ -174,6 +192,8 @@ Object.freeze(CONFIG.PHYSICS);
 Object.freeze(CONFIG.BIRD);
 Object.freeze(CONFIG.BIRD.SKINS);
 Object.freeze(CONFIG.PIPE);
+Object.freeze(CONFIG.GHOST);
+Object.freeze(CONFIG.MUTATORS);
 Object.freeze(CONFIG.DIFFICULTY);
 Object.freeze(CONFIG.VISUALS);
 Object.freeze(CONFIG.VISUALS.THEMES);

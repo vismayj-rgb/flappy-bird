@@ -62,6 +62,12 @@ class Game {
     this.pipeManager.reset();
     this.scoreManager.reset();
     
+    // Reset ghost recording and playback
+    if (window.ghostManager) {
+      ghostManager.startRecording();
+      ghostManager.resetPlay();
+    }
+
     // Load skin settings on start
     const savedSkin = StorageManager.get(CONFIG.STORAGE.BIRD_SKIN, 'CLASSIC');
     this.bird.skin = savedSkin;
@@ -80,6 +86,14 @@ class Game {
     this.state = CONFIG.STATES.GAME_OVER;
     this.scoreManager.endGame();
     soundManager.playGameOver();
+
+    // Save ghost run if high score
+    if (window.ghostManager) {
+      ghostManager.saveIfBest(
+        this.scoreManager.currentScore,
+        this.scoreManager.currentScore >= this.scoreManager.highScore
+      );
+    }
 
     // Record this run in the run log
     if (window.runLogManager) {
@@ -107,8 +121,13 @@ class Game {
     // Update bird
     this.bird.update();
 
+    // Record ghost run frame
+    if (window.ghostManager && ghostManager.enabled) {
+      ghostManager.recordFrame(this.bird.y, this.bird.rotation, birdX);
+    }
+
     // Update pipes
-    const speed = this.pipeManager.speed;
+    const speed = this.pipeManager.speed * (window.mutatorManager ? mutatorManager.getSpeedMultiplier() : 1);
     this.pipeManager.pipes.forEach(p => p.update(speed));
     this.pipeManager.frameCount++;
     if (this.pipeManager.frameCount >= this.pipeManager.spawnInterval) {
@@ -161,6 +180,11 @@ class Game {
 
     // Draw pipes
     this.pipeManager.draw(this.ctx, this.getThemeColors());
+
+    // Draw ghost replay
+    if (window.ghostManager) {
+      ghostManager.draw(this.ctx);
+    }
 
     // Draw bird
     this.bird.draw(this.ctx);
