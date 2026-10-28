@@ -32,6 +32,11 @@ class Game {
     const settings = StorageManager.getGameSettings();
     soundManager.setEnabled(settings.soundEnabled);
     this.setDifficulty(settings.difficulty);
+
+    // Initialize the combo tracker once when the game is created
+    if (window.comboManager) {
+      comboManager.reset();
+    }
   }
 
   generateClouds() {
@@ -143,6 +148,11 @@ class Game {
     // Remove off-screen pipes
     this.pipeManager.pipes = this.pipeManager.pipes.filter(p => !p.isOffScreen());
 
+    // Advance combo clock
+    if (window.comboManager) {
+      comboManager.tick();
+    }
+
     // Update clouds
     this.clouds.forEach(cloud => {
       cloud.x -= cloud.speed;
@@ -165,10 +175,17 @@ class Game {
 
     // Check scoring
     if (CollisionManager.checkScoring(this.bird, this.pipeManager.getPipes())) {
-      this.scoreManager.increment(1);
+      // Apply combo multiplier to the points earned for this pipe
+      let points;
+      if (window.comboManager) {
+        points = comboManager.registerScore();
+      }
+      this.scoreManager.increment(points);
+      this.scoreManager.increment(comboManager.getCombo());
 
       if (window.achievementManager) {
         achievementManager.check('score', this.scoreManager.currentScore);
+        achievementManager.check('combo', this.scoreManager.currentScore);
       }
     }
   }
@@ -201,6 +218,9 @@ class Game {
     if (this.state === CONFIG.STATES.PLAYING) {
       this.scoreManager.draw(this.ctx);
     }
+
+    // Draw the combo meter
+    comboManager.draw(this.ctx);
 
     // Draw pause indicator
     if (this.state === CONFIG.STATES.PAUSED) {
