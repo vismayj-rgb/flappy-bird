@@ -36,6 +36,9 @@ class AchievementManager {
         case 'gold_flapper':
           if (metric === 'score' && value >= 50) shouldUnlock = true;
           break;
+        case 'combo_master':
+          if (metric === 'combo' && value >= 10) shouldUnlock = true;
+          break;
       }
 
       if (shouldUnlock) {
