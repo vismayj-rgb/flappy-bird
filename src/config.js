@@ -118,6 +118,14 @@ const CONFIG = {
     }
   },
 
+  // Combo / streak multiplier settings
+  COMBO: {
+    BASE_POINTS: 1,
+    STEP: 3,            // every 3 chained pipes raises the multiplier
+    MAX_MULTIPLIER: 5,
+    WINDOW_FRAMES: 180  // combo resets if no pipe is passed within this many frames
+  },
+
   // Score settings
   SCORE: {
     FONT: 'bold 48px Arial',
@@ -160,7 +168,8 @@ const CONFIG = {
     { id: 'first_flight',  title: 'First Flight 🐦',    desc: 'Score your first point!' },
     { id: 'bronze_flapper',title: 'Bronze Flapper 🥉', desc: 'Reach a score of 10 points.' },
     { id: 'silver_flapper',title: 'Silver Flapper 🥈', desc: 'Reach a score of 25 points.' },
-    { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' }
+    { id: 'gold_flapper',  title: 'Gold Flapper 🥇',   desc: 'Reach a score of 50 points.' },
+    { id: 'combo_master',  title: 'Combo Master 🔥',   desc: 'Reach a 10-pipe combo in a single run.' }
   ],
 
   // Debug mode
