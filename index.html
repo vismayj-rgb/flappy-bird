@@ -87,6 +87,26 @@
         </label>
       </div>
 
+      <div class="daily-challenge">
+        <h3>🔥 Daily Challenge</h3>
+        <div class="daily-row">
+          <span class="stat-label">Goal:</span>
+          <span class="stat-value" id="dailyChallengeDesc">—</span>
+        </div>
+        <div class="daily-row">
+          <span class="stat-label">Streak:</span>
+          <span class="stat-value" id="dailyStreak">0</span>
+        </div>
+        <div class="daily-row">
+          <span class="stat-label">Status:</span>
+          <span class="stat-value" id="dailyStatus">⏳ In progress</span>
+        </div>
+        <div class="daily-row">
+          <span class="stat-label">🪙 Coins:</span>
+          <span class="stat-value" id="coinBalance">0</span>
+        </div>
+      </div>
+
       <div class="achievements">
         <h3>Achievements</h3>
         <div id="achievementsList" class="achievements-list">
@@ -126,6 +146,8 @@
   <script src="src/managers/runlog.js"></script>
   <script src="src/managers/ghost.js"></script>
   <script src="src/managers/mutator.js"></script>
+  <script src="src/managers/dailychallenge.js"></script>
+  <script src="src/managers/coins.js"></script>
   <script src="src/game.js"></script>
   <script src="src/main.js"></script>
 </body>

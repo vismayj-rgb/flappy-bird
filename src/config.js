@@ -154,7 +154,10 @@ const CONFIG = {
     ACHIEVEMENTS: 'flappybird_achievements',
     BEST_RUNS: 'flappybird_bestruns',
     GHOST_RUN: 'flappybird_ghostrun',
-    MUTATOR_SETTINGS: 'flappybird_mutators'
+    MUTATOR_SETTINGS: 'flappybird_mutators',
+    COIN_BALANCE: 'flappybird_coins',
+    COIN_LIFETIME: 'flappybird_coins_lifetime',
+    DAILY_CHALLENGE: 'flappybird_daily'
   },
 
   // Replay and Ghost System settings
