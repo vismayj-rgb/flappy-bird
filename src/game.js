@@ -101,7 +101,20 @@ class Game {
     if (window.runLogManager) {
       runLogManager.record(this.scoreManager.currentScore, this.difficulty);
     }
-    
+
+    // Award coins for the run and evaluate the daily challenge
+    const finalScore = this.scoreManager.getCurrentScore();
+    if (window.coinManager) {
+      coinManager.awardForScore(finalScore);
+    }
+    if (window.dailyChallengeManager) {
+      // BUG: evaluate() is called before rolloverIfNeeded(), so if the player
+      // completed the challenge yesterday and the app stayed open past midnight,
+      // completedToday is still true and today's completion is skipped.
+      dailyChallengeManager.evaluate(finalScore);
+      dailyChallengeManager.rolloverIfNeeded();
+    }
+
     // Show game over screen
     const gameOverScreen = document.getElementById('gameOverScreen');
     if (gameOverScreen) {
